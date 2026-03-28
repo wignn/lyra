@@ -30,7 +30,7 @@ plugins:
         playback: true        # Requires OAuth
         playlistLoading: false
         searching: false
-        videoLoading: false
+        videoLoading: true
       WEB:
         playback: true
         playlistLoading: true
