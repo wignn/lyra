@@ -18,7 +18,7 @@ plugins:
       token: ${PLUGINS_YOUTUBE_POT_TOKEN:}
       visitorData: ${PLUGINS_YOUTUBE_POT_VISITOR_DATA:}
     clients:
-      - TV           
+      - TVHTML5            
       - ANDROID_VR
       - ANDROID_MUSIC
       - MWEB
