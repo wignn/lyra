@@ -11,6 +11,7 @@ ARG DOCKER_BUILD_TYPE=release
 ENV SQLX_OFFLINE=true
 # Build dependencies - this is cached
 COPY --from=planner /app/recipe.json recipe.json
+COPY vendor ./vendor
 RUN <<EOF
   if [ "$DOCKER_BUILD_TYPE" = "release" ]; then
     cargo chef cook --release --recipe-path recipe.json;

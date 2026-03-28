@@ -305,7 +305,7 @@ async fn match_state_channel_id(
             let response = join::Response::new_move(old_channel_id, joined, voice_is_empty, mute);
 
             if let Ok(player) = require::player(ctx) {
-                player.update_voice_channel(voice_is_empty).await?;
+                player.update_voice_channel(channel_id, voice_is_empty).await?;
             }
             let forcefully_moved_notice = if voice_is_empty {
                 let duration = unix_time() + INACTIVITY_TIMEOUT;

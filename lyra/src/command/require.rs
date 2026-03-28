@@ -1,7 +1,8 @@
 use std::{num::NonZeroUsize, time::Duration};
 
 use lavalink_rs::{
-    error::LavalinkResult, model::player::Player as PlayerInfo, player_context::PlayerContext,
+    error::{LavalinkError, LavalinkResult}, model::player::Player as PlayerInfo,
+    player_context::PlayerContext,
 };
 use twilight_cache_inmemory::{InMemoryCache, Reference, model::CachedVoiceState};
 use twilight_model::{
@@ -51,22 +52,88 @@ impl PlayerInterface {
         self.context.data_unwrapped()
     }
 
-    pub async fn update_voice_channel(&self, voice_is_empty: bool) -> LavalinkResult<()> {
-        let mut update_player = lavalink_rs::model::http::UpdatePlayer {
-            voice: Some(
-                self.context
-                    .client
-                    .get_connection_info_traced(self.context.guild_id)
-                    .await?,
-            ),
-            ..Default::default()
-        };
-        if voice_is_empty {
-            update_player.paused = Some(true);
-            self.data().write().await.set_pause(true);
+    pub async fn update_voice_channel(
+        &self,
+        channel_id: Id<ChannelMarker>,
+        voice_is_empty: bool,
+    ) -> LavalinkResult<()> {
+        #[derive(serde::Serialize)]
+        #[serde(rename_all = "camelCase")]
+        struct VoiceStatePatch {
+            endpoint: String,
+            token: String,
+            session_id: String,
+            channel_id: u64,
         }
-        self.context.update_player(&update_player, true).await?;
-        Ok(())
+
+        #[derive(serde::Serialize)]
+        #[serde(rename_all = "camelCase")]
+        struct UpdatePlayerPatch {
+            voice: VoiceStatePatch,
+            #[serde(skip_serializing_if = "Option::is_none")]
+            paused: Option<bool>,
+        }
+
+        const RETRIES: usize = 3;
+
+        for attempt in 1..=RETRIES {
+            let voice = self
+                .context
+                .client
+                .get_connection_info_traced(self.context.guild_id)
+                .await?;
+            let patch = UpdatePlayerPatch {
+                voice: VoiceStatePatch {
+                    endpoint: voice.endpoint,
+                    token: voice.token,
+                    session_id: voice.session_id,
+                    channel_id: channel_id.get(),
+                },
+                paused: voice_is_empty.then_some(true),
+            };
+            if voice_is_empty {
+                self.data().write().await.set_pause(true);
+            }
+
+            let node = self.context.client.get_node_for_guild(self.context.guild_id).await;
+            let session_id = node.session_id.load();
+            let uri = node.http.path_to_uri(
+                &format!(
+                    "/sessions/{}/players/{}?noReplace=true",
+                    session_id,
+                    self.context.guild_id.0
+                ),
+                true,
+            )?;
+
+            match node
+                .http
+                .request::<serde_json::Value, _, _>(::http::Method::PATCH, uri, Some(&patch))
+                .await
+            {
+                Ok(_) => return Ok(()),
+                Err(err) => {
+                    let is_bad_request =
+                        matches!(&err, LavalinkError::ResponseError(response) if response.status == 400);
+
+                    if is_bad_request && attempt < RETRIES {
+                        tracing::warn!(
+                            "retrying voice update for guild {:?} channel {} after lavalink 400 (attempt {}/{})",
+                            self.context.guild_id,
+                            channel_id,
+                            attempt,
+                            RETRIES,
+                        );
+                        tokio::time::sleep(Duration::from_millis(250)).await;
+                        continue;
+                    }
+
+                    return Err(err);
+                }
+            }
+        }
+
+        unreachable!("voice update retry loop should return on success or error")
     }
 
     pub async fn seek_to_with(

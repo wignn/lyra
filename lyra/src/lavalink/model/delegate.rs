@@ -5,7 +5,10 @@ use lavalink_rs::{
     prelude::PlayerContext,
 };
 use tokio::sync::RwLock;
-use twilight_model::id::{Id, marker::ChannelMarker};
+use twilight_model::id::{
+    Id,
+    marker::{ChannelMarker, UserMarker},
+};
 
 use crate::core::konst;
 
@@ -27,12 +30,15 @@ pub trait DelegateMethods {
         user_id: impl Into<lavalink_rs::model::UserId>,
         session_id: String,
     );
-    fn process(&self, event: &twilight_gateway::Event) {
+    fn process(&self, event: &twilight_gateway::Event, bot_user_id: Option<Id<UserMarker>>) {
         match event {
             twilight_gateway::Event::VoiceServerUpdate(e) => {
                 self.handle_voice_server_update(e.guild_id, e.token.clone(), e.endpoint.clone());
             }
             twilight_gateway::Event::VoiceStateUpdate(e) => {
+                if bot_user_id != Some(e.user_id) {
+                    return;
+                }
                 self.handle_voice_state_update(
                     e.guild_id
                         .expect("bots should currently only be able to join guild voice channels"),
