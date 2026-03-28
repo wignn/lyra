@@ -1,0 +1,95 @@
+services:
+  db:
+    image: postgres:17
+    restart: always
+    expose:
+      - 5432
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-lyra}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+
+    volumes:
+      - "${DOCKER_POSTGRES_PATH}:/var/lib/postgresql/data"
+    networks:
+      - private
+
+  lavalink:
+    # pin the image version to Lavalink v4
+    image: ghcr.io/lavalink-devs/lavalink:4
+    container_name: lavalink
+    restart: always
+    # Host networking is required to reach warp-cli's 127.0.0.1 SOCKS proxy.
+    network_mode: host
+    environment:
+      _JAVA_OPTIONS: ${LAVALINK_JAVA_OPTIONS:--Xmx6G -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true}
+      JAVA_TOOL_OPTIONS: "-DsocksProxyHost=127.0.0.1 -DsocksProxyPort=${WARP_SOCKS_PORT:-40000}"
+      SERVER_ADDRESS: 0.0.0.0
+      SERVER_PORT: ${SERVER_PORT:-2333}
+      LAVALINK_SERVER_PASSWORD: ${LAVALINK_SERVER_PASSWORD:?err}
+      LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+      LOGGING_LEVEL_LAVALINK: ${LOGGING_LEVEL_LAVALINK:-INFO}
+      LOGGING_LEVEL_DEV_LAVALINK_YOUTUBE_HTTP_YOUTUBEOAUTH2HANDLER: ${LOGGING_LEVEL_DEV_LAVALINK_YOUTUBE_HTTP_YOUTUBEOAUTH2HANDLER:-INFO}
+      PLUGINS_YOUTUBE_OAUTH_ENABLED: ${PLUGINS_YOUTUBE_OAUTH_ENABLED:-true}
+      PLUGINS_YOUTUBE_OAUTH_REFRESH_TOKEN: ${PLUGINS_YOUTUBE_OAUTH_REFRESH_TOKEN}
+      PLUGINS_YOUTUBE_OAUTH_SKIP_INITIALIZATION: ${PLUGINS_YOUTUBE_OAUTH_SKIP_INITIALIZATION:-false}
+      PLUGINS_YOUTUBE_POT_TOKEN: ${PLUGINS_YOUTUBE_POT_TOKEN}
+      PLUGINS_YOUTUBE_POT_VISITOR_DATA: ${PLUGINS_YOUTUBE_POT_VISITOR_DATA}
+      PLUGINS_LAVASRC_SOURCES_SPOTIFY: ${PLUGINS_LAVASRC_SOURCES_SPOTIFY:-false}
+      PLUGINS_LAVASRC_SPOTIFY_CLIENT_ID: ${PLUGINS_LAVASRC_SPOTIFY_CLIENT_ID}
+      PLUGINS_LAVASRC_SPOTIFY_CLIENT_SECRET: ${PLUGINS_LAVASRC_SPOTIFY_CLIENT_SECRET}
+      PLUGINS_LAVASRC_SOURCES_DEEZER: ${PLUGINS_LAVASRC_SOURCES_DEEZER:-false}
+      PLUGINS_LAVASRC_DEEZER_MASTER_DECRYPTION_KEY: ${PLUGINS_LAVASRC_DEEZER_MASTER_DECRYPTION_KEY}
+      PLUGINS_LAVASRC_DEEZER_ARL: ${PLUGINS_LAVASRC_DEEZER_ARL}
+    volumes:
+      - ./lavalink/application.yml:/opt/Lavalink/application.yml:ro
+      - "${DOCKER_LAVALINK_PLUGINS_PATH}:/opt/Lavalink/plugins/"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "-H",
+          "Authorization: ${LAVALINK_SERVER_PASSWORD}",
+          "http://localhost:2333/version",
+        ]
+      interval: 60s
+      start_period: 10s
+      timeout: 10s
+      retries: 5
+
+  lyra:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SQLX_OFFLINE: true
+      DATABASE_URL: ${DATABASE_URL}
+      BOT_TOKEN: ${BOT_TOKEN:?err}
+      # Lavalink runs on the Docker host network; reach it through the host gateway.
+      # NOTE: We intentionally do NOT read from `SERVER_ADDRESS`/`SERVER_PORT` here.
+      # Many users export those for the normal compose file (where SERVER_ADDRESS=lavalink).
+      # In this WARP compose file Lavalink uses host networking, so `lavalink` is not resolvable.
+      SERVER_ADDRESS: ${LYRA_LAVALINK_ADDRESS:-host.docker.internal}
+      SERVER_PORT: ${LYRA_LAVALINK_PORT:-2333}
+      LAVALINK_SERVER_PASSWORD: ${LAVALINK_SERVER_PASSWORD:?err}
+      LAVALINK_IS_SSL: ${LAVALINK_IS_SSL:-false}
+      PLUGINS_LAVASRC_SOURCES_DEEZER: ${PLUGINS_LAVASRC_SOURCES_DEEZER:-false}
+      PLUGINS_LAVASRC_SOURCES_SPOTIFY: ${PLUGINS_LAVASRC_SOURCES_SPOTIFY:-false}
+      PLUGINS_YOUTUBE_OAUTH_ENABLED: ${PLUGINS_YOUTUBE_OAUTH_ENABLED:-true}
+      RUST_BACKTRACE: ${RUST_BACKTRACE:-0}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_started
+        restart: true
+    restart: always
+    networks:
+      - private
+
+networks:
+  private:
+    external: false
