@@ -33,3 +33,6 @@ const-str = "0.7.0"
 
 [profile.release]
 lto = true
+
+[patch.crates-io]
+lavalink-rs = { path = "vendor/lavalink-rs" }

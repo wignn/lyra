@@ -35,6 +35,7 @@ pub struct Config {
     token: String,
     lavalink_host: String,
     lavalink_pwd: String,
+    lavalink_is_ssl: bool,
     database_url: String,
 }
 
@@ -49,6 +50,10 @@ impl Config {
             ),
             lavalink_pwd: env::var("LAVALINK_SERVER_PASSWORD")
                 .expect("missing LAVALINK_SERVER_PASSWORD"),
+            lavalink_is_ssl: env::var("LAVALINK_IS_SSL")
+                .ok()
+                .map(|v| matches!(v.trim().to_ascii_lowercase().as_str(), "1" | "true" | "yes" | "on"))
+                .unwrap_or(false),
             database_url: env::var("DATABASE_URL").expect("missing DATABASE_URL"),
         }
     }
@@ -61,8 +66,8 @@ impl Config {
         std::mem::take(&mut self.token)
     }
 
-    pub fn into_lavalink_host_and_pwd(self) -> (String, String) {
-        (self.lavalink_host, self.lavalink_pwd)
+    pub fn into_lavalink_config(self) -> (String, String, bool) {
+        (self.lavalink_host, self.lavalink_pwd, self.lavalink_is_ssl)
     }
 }
 

@@ -278,7 +278,7 @@ async fn impl_connect_to(
     ctx.sender()
         .command(&UpdateVoiceState::new(guild_id, channel_id, true, false))?;
 
-    update_player_voice_channel(old_channel_id, guild_id, ctx, voice_is_empty).await?;
+    update_player_voice_channel(channel_id, old_channel_id, guild_id, ctx, voice_is_empty).await?;
 
     if joined.kind == JoinedChannelType::Stage {
         ctx.bot()
@@ -296,6 +296,7 @@ async fn impl_connect_to(
 /// Updates the lavalink player of a matching guild ID's voice channel to be in
 /// sync with the actual currently connected voice channel.
 async fn update_player_voice_channel(
+    channel_id: Id<ChannelMarker>,
     old_channel_id: Option<Id<ChannelMarker>>,
     guild_id: Id<GuildMarker>,
     ctx: &GuildCtx<impl CtxKind>,
@@ -317,7 +318,7 @@ async fn update_player_voice_channel(
             })
             .await;
         tracing::debug!("voice server update received");
-        player.update_voice_channel(voice_is_empty).await?;
+        player.update_voice_channel(channel_id, voice_is_empty).await?;
     }
     Ok(())
 }

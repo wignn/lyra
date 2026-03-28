@@ -4,14 +4,21 @@ plugins:
     allowSearch: true # Whether "ytsearch:" and "ytmsearch:" can be used.
     allowDirectVideoIds: true # Whether just video IDs can match. If false, only complete URLs will be loaded.
     allowDirectPlaylistIds: true # Whether just playlist IDs can match. If false, only complete URLs will be loaded.
+    oauth:
+      enabled: ${PLUGINS_YOUTUBE_OAUTH_ENABLED:false}
+      refreshToken: ${PLUGINS_YOUTUBE_OAUTH_REFRESH_TOKEN:}
+      skipInitialization: ${PLUGINS_YOUTUBE_OAUTH_SKIP_INITIALIZATION:true}
+    pot:
+      token: ${PLUGINS_YOUTUBE_POT_TOKEN:}
+      visitorData: ${PLUGINS_YOUTUBE_POT_VISITOR_DATA:}
     # The clients to use for track loading. See below for a list of valid clients.
     # Clients are queried in the order they are given (left-to-right)
     clients:
       - MUSIC
-      - ANDROID_VR
-      - WEB
       - WEBEMBEDDED
-      - TVHTML5EMBEDDED
+      - MWEB
+      - WEB
+      - ANDROID_VR
   lavasrc:
     providers: # Custom providers for track loading. This is the default
       - "dzisrc:%ISRC%" # Deezer ISRC provider
@@ -25,7 +32,7 @@ plugins:
       # deezer: true # Enable Deezer source
       # yandexmusic: true # Enable Yandex Music source
     spotify:
-      countryCode: "US" # the country code you want to use for filtering the artists top tracks. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+      countryCode: "ID" # the country code you want to use for filtering the artists top tracks. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
     # applemusic:
     #   countryCode: "US" # the country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
     #   mediaAPIToken: "..." # Can be used to bypass the auto token fetching which is likely to break again in the future
@@ -34,18 +41,18 @@ plugins:
 
 lavalink:
   plugins:
-    - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.7.0"
+    - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.8.1"
       snapshot: false
     - dependency: "com.github.topi314.lavasearch:lavasearch-plugin:1.0.0"
       snapshot: false
-    - dependency: "dev.lavalink.youtube:youtube-plugin:1.13.3"
+    - dependency: "dev.lavalink.youtube:youtube-plugin:1.18.0"
       snapshot: false
   server:
     sources:
       youtube: false
       bandcamp: true
       soundcloud: true
-      twitch: true
+      twitch: false
       vimeo: true
       http: true
       local: false

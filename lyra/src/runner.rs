@@ -97,8 +97,9 @@ pub async fn start() -> Result<(), StartError> {
     let data = ClientData::new(http.clone(), cache.clone(), db.clone());
     let user_id = http.current_user().await?.model().await?.id;
 
-    let (lavalink_host, lavalink_pwd) = config.into_lavalink_host_and_pwd();
-    let lavalink = build_lavalink_client(lavalink_host, lavalink_pwd, user_id, data).await;
+    let (lavalink_host, lavalink_pwd, lavalink_is_ssl) = config.into_lavalink_config();
+    let lavalink =
+        build_lavalink_client(lavalink_host, lavalink_pwd, lavalink_is_ssl, user_id, data).await;
 
     let shards = build_and_split_shards(token, &http).await?;
     let shards_len = shards.len();
@@ -130,6 +131,7 @@ async fn build_and_split_shards(
 async fn build_lavalink_client(
     hostname: String,
     password: String,
+    is_ssl: bool,
     user_id: Id<UserMarker>,
     data: ClientData,
 ) -> Lavalink {
@@ -138,6 +140,7 @@ async fn build_lavalink_client(
     let nodes = Vec::from([lavalink_rs::node::NodeBuilder {
         hostname,
         password,
+        is_ssl,
         user_id: user_id.into(),
         ..Default::default()
     }]);
@@ -170,7 +173,8 @@ fn process_gateway_events(shard: &Shard, event: Event, bot: Arc<BotState>) {
 
     bot.cache().update(&event);
     bot.standby().process(&event);
-    bot.lavalink().process(&event);
+    let bot_user_id = bot.cache().current_user().map(|u| u.id);
+    bot.lavalink().process(&event, bot_user_id);
 
     traced::tokio_spawn(gateway::process(
         bot,
