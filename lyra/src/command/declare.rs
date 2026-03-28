@@ -12,8 +12,9 @@ use crate::component::{
     misc::{Ping, Uptime},
     playback::{Back, Jump, JumpAutocomplete, PlayPause, Restart, Seek, Skip},
     queue::{
-        AddToQueue, Clear, FairQueue, Move, MoveAutocomplete, Play, PlayAutocomplete, PlayFile,
-        Remove, RemoveAutocomplete, RemoveRange, RemoveRangeAutocomplete, Repeat, Shuffle,
+        AddToQueue, Autoplay, Clear, FairQueue, Move, MoveAutocomplete, Play, PlayAutocomplete,
+        PlayFile, Remove, RemoveAutocomplete, RemoveRange, RemoveRangeAutocomplete, Repeat,
+        Shuffle,
     },
     tuning::{Equaliser, Filter, Speed, Volume},
 };
@@ -322,6 +323,7 @@ declare_slash_commands![
     Config,
     Play,
     PlayFile,
+    Autoplay,
     Repeat,
     Shuffle,
     FairQueue,
@@ -350,6 +352,7 @@ declare_guild_slash_commands_callback![
     Config,
     Play,
     PlayFile,
+    Autoplay,
     Repeat,
     Shuffle,
     FairQueue,

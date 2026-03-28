@@ -65,7 +65,7 @@ fn build_shard_config(token: String) -> ShardConfig {
             UpdatePresencePayload::new(
                 [Activity::from(MinimalActivity {
                     kind: ActivityType::Listening,
-                    name: String::from("/play"),
+                    name: String::from("spotify"),
                     url: None,
                 })],
                 false,

@@ -91,6 +91,7 @@ pub struct Queue {
     index: usize,
     indexer: Indexer,
     repeat_mode: RepeatMode,
+    autoplay: bool,
     advancing_enabler: watch::Sender<bool>,
 }
 
@@ -101,6 +102,7 @@ impl Queue {
             indexer: Indexer::Standard,
             index: 0,
             repeat_mode: RepeatMode::Off,
+            autoplay: false,
             advancing_enabler: watch::channel(true).0,
         }
     }
@@ -296,6 +298,19 @@ impl Queue {
     pub fn enable_advancing(&self) {
         tracing::debug!("enabling queue advancing");
         self.set_advancing_state(true);
+    }
+
+    pub const fn autoplay(&self) -> bool {
+        self.autoplay
+    }
+
+    pub const fn set_autoplay(&mut self, state: bool) {
+        self.autoplay = state;
+    }
+
+    pub fn toggle_autoplay(&mut self) -> bool {
+        self.autoplay = !self.autoplay;
+        self.autoplay
     }
 
     pub async fn advancing_disabled(&self) -> bool {

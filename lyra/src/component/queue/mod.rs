@@ -1,3 +1,4 @@
+mod autoplay;
 mod clear;
 mod fair_queue;
 mod mov;
@@ -7,6 +8,7 @@ mod remove_range;
 mod repeat;
 mod shuffle;
 
+pub use autoplay::Autoplay;
 pub use clear::Clear;
 pub use fair_queue::FairQueue;
 use lyra_ext::{
