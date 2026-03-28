@@ -18,14 +18,13 @@ plugins:
       token: ${PLUGINS_YOUTUBE_POT_TOKEN:}
       visitorData: ${PLUGINS_YOUTUBE_POT_VISITOR_DATA:}
     clients:
+      - TV           
       - ANDROID_VR
       - ANDROID_MUSIC
-      - IOS
       - MWEB
       - WEB
       - MUSIC
       - WEBEMBEDDED
-      - TV
     clientOptions:
       TV:
         playback: true        # Requires OAuth
