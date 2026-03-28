@@ -18,54 +18,54 @@ plugins:
       token: ${PLUGINS_YOUTUBE_POT_TOKEN:}
       visitorData: ${PLUGINS_YOUTUBE_POT_VISITOR_DATA:}
     clients:
-      - TVHTML5            
+      - TV       
       - ANDROID_VR
       - ANDROID_MUSIC
       - MWEB
       - WEB
       - MUSIC
       - WEBEMBEDDED
-    clientOptions:
-      TV:
-        playback: true        # Requires OAuth
-        playlistLoading: false
-        searching: false
-        videoLoading: true
-      WEB:
-        playback: true
-        playlistLoading: true
-        searching: true
-        videoLoading: true
-      MWEB:
-        playback: true
-        playlistLoading: true
-        searching: true
-        videoLoading: true
-      WEBEMBEDDED:
-        playback: true
-        playlistLoading: false
-        searching: false
-        videoLoading: true
-      MUSIC:
-        playback: false
-        playlistLoading: false
-        searching: true
-        videoLoading: false
-      ANDROID_VR:
-        playback: true
-        playlistLoading: true
-        searching: true
-        videoLoading: true
-      ANDROID_MUSIC:
-        playback: true
-        playlistLoading: false
-        searching: true
-        videoLoading: true
-      IOS:
-        playback: true
-        playlistLoading: true
-        searching: true
-        videoLoading: true
+    # clientOptions:
+    #   TV:
+    #     playback: true        # Requires OAuth
+    #     playlistLoading: false
+    #     searching: false
+    #     videoLoading: true
+    #   WEB:
+    #     playback: true
+    #     playlistLoading: true
+    #     searching: true
+    #     videoLoading: true
+    #   MWEB:
+    #     playback: true
+    #     playlistLoading: true
+    #     searching: true
+    #     videoLoading: true
+    #   WEBEMBEDDED:
+    #     playback: true
+    #     playlistLoading: false
+    #     searching: false
+    #     videoLoading: true
+    #   MUSIC:
+    #     playback: false
+    #     playlistLoading: false
+    #     searching: true
+    #     videoLoading: false
+    #   ANDROID_VR:
+    #     playback: true
+    #     playlistLoading: true
+    #     searching: true
+    #     videoLoading: true
+    #   ANDROID_MUSIC:
+    #     playback: true
+    #     playlistLoading: false
+    #     searching: true
+    #     videoLoading: true
+    #   IOS:
+    #     playback: true
+    #     playlistLoading: true
+    #     searching: true
+    #     videoLoading: true
 
   lavalyrics:
     sources:
