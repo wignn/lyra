@@ -83,6 +83,9 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
+      lavalink:
+        condition: service_healthy
+        restart: true
       db:
         condition: service_started
         restart: true

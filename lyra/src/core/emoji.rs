@@ -32,13 +32,13 @@ macro_rules! generate_emojis {
 }
 
 generate_emojis![
-    (shuffle_off, "⬅️"),
-    (shuffle_on, "🔀"),
-    (previous, "⏮️"),
-    (play, "▶️"),
-    (pause, "⏸️"),
-    (next, "⏭️"),
-    (repeat_off, "➡️"),
-    (repeat_all, "🔁"),
-    (repeat_track, "🔂"),
+    (shuffle_off, "🎲"),
+    (shuffle_on, "🎲"),
+    (previous, "◀"),
+    (play, "▶"),
+    (pause, "⏸"),
+    (next, "▶"),
+    (repeat_off, "↩"),
+    (repeat_all, "↩"),
+    (repeat_track, "↪"),
 ];
