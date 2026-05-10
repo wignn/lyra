@@ -200,7 +200,7 @@ impl AutocompleteResultPrettify for TrackData {
         let title = track_info.take_and_correct_title();
 
         format!(
-            "⌛{} 👤{} 🎵{}",
+            "⏱{} 🎤{} 🎵{}",
             track_length.pretty_display(),
             author.pretty_truncate(15),
             title.pretty_truncate(55)
@@ -219,7 +219,7 @@ impl AutocompleteResultPrettify for LoadedTracks {
         let track_count = data.tracks.len();
 
         format!(
-            "📚{} tracks ⌛{} 🎵{}",
+            "📋{} tracks ⏱{} 🎵{}",
             track_count,
             track_length.pretty_display(),
             name.pretty_truncate(80)

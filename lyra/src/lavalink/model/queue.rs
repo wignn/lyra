@@ -28,7 +28,7 @@ impl RepeatMode {
 
     pub const fn emoji(&self) -> &str {
         match self {
-            Self::Off => "➡️",
+            Self::Off => "▶️",
             Self::All => "🔁",
             Self::Track => "🔂",
         }

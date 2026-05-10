@@ -88,7 +88,7 @@ impl<'a> From<&'a Data> for AlbumInfo<'a> {
 impl std::fmt::Display for AlbumInfo<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let Some(n) = self.0.as_ref() {
-            f.write_str("📀 **")?;
+            f.write_str("💿 **")?;
             f.write_str(n)?;
             f.write_str("**\n")?;
         }
@@ -107,7 +107,7 @@ impl<'a> From<&'a Data> for PlaylistInfo<'a> {
 impl std::fmt::Display for PlaylistInfo<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let Some(p) = self.0.as_ref() {
-            f.write_str("📚 **[")?;
+            f.write_str("📋 **[")?;
             f.write_str(p.name())?;
             f.write_str("](")?;
             f.write_str(p.uri())?;
@@ -124,11 +124,11 @@ impl std::fmt::Display for Description<'_> {
         let data = self.0;
         AlbumInfo::from(data).fmt(f)?;
         PlaylistInfo::from(data).fmt(f)?;
-        f.write_str("#️⃣ **")?;
+        f.write_str("🔢 **")?;
         data.queue().position().fmt(f)?;
         f.write_str("** / ")?;
         data.queue().len().fmt(f)?;
-        f.write_str(" ⏳ ")?;
+        f.write_str(" ⏱️ ")?;
         DurationLeft::from(data).fmt(f)?;
         f.write_str(" / ")?;
         data.duration.pretty_display().fmt(f)?;
@@ -243,7 +243,7 @@ impl Message {
         if self.data.paused {
             return "Now Playing";
         }
-        "🎵 **Now Playing**"
+        "🎶 **Now Playing**"
     }
 
     async fn build_components(&self) -> Result<Component, DeserialiseBodyFromHttpError> {

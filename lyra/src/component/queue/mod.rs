@@ -68,7 +68,7 @@ fn generate_position_choice(
 
     CommandOptionChoice {
         name: format!(
-            "#{} ⌛{} 🎤{} 🎵{}",
+            "#{} ⏱{} 👤{} 🎵{}",
             position,
             track_length.pretty_display(),
             requester,

@@ -20,7 +20,7 @@ pub(super) async fn impl_stuck(
         .data_unwrapped()
         .http()
         .create_message(channel_id)
-        .content("🌀 Playback interrupted. Please wait or try using the bot again later.")
+        .content("⏳ Playback interrupted. Please wait or try using the bot again later.")
         .await?;
 
     Ok(())

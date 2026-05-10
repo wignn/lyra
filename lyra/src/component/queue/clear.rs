@@ -49,7 +49,7 @@ impl BotGuildSlashCommand for Clear {
         ctx.get_conn().dispatch(Event::QueueClear).await?;
 
         data.write().await.queue_mut().clear();
-        ctx.out("⏹️ Cleared the queue.").await?;
+        ctx.out("🗑️ Cleared the queue.").await?;
         Ok(())
     }
 }

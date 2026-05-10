@@ -18,7 +18,7 @@ pub(super) const fn volume_emoji(percent: Option<NonZeroU16>) -> &'static str {
         1..=33 => "🔈",
         34..=66 => "🔉",
         67..=100 => "🔊",
-        101.. => "❕🔊",
+        101.. => "⚠️🔊",
     }
 }
 

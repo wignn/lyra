@@ -46,7 +46,7 @@ pub async fn shuffle(
                 .set_indexer_then_update_and_apply_to_now_playing(IndexerType::Standard)
                 .await?;
 
-            let content = controller_fmt(ctx, via_controller, "**` ⮆ `** Disabled shuffle.");
+            let content = controller_fmt(ctx, via_controller, "🔀 Disabled shuffle.");
             ctx.out(content).await?;
             Ok(())
         }

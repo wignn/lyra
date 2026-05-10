@@ -23,9 +23,9 @@ impl BotGuildSlashCommand for Autoplay {
         drop(data_w);
 
         let message = if enabled {
-            "🔄 Enabled autoplay. Related tracks will be automatically played when the queue ends."
+            "♾️ Enabled autoplay. Related tracks will be automatically played when the queue ends."
         } else {
-            "⏹️ Disabled autoplay."
+            "♾️ Disabled autoplay."
         };
         ctx.out(message).await?;
         Ok(())

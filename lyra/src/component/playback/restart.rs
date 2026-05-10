@@ -31,7 +31,7 @@ impl BotGuildSlashCommand for Restart {
         player
             .seek_to_with(Duration::ZERO, &mut data.write().await)
             .await?;
-        ctx.out("◀️ Restarted.").await?;
+        ctx.out("🔄 Restarted.").await?;
         Ok(())
     }
 }

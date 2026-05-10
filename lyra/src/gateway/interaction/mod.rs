@@ -106,7 +106,7 @@ where
             // and `message` is almost always "Something went wrong while looking up the track.",
             // with `cause` repeating the same message, so the information from the error object
             // is entirely ignored.
-            "💔 **Unable to load track**: \
+            "❌ **Unable to load track**: \
                     Please ensure the URL is from a supported audio streaming service and \
                     the content is publicly accessible.  \n\
                     -# **Supported streaming services**: {}. \

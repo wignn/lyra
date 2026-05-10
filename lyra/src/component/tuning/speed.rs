@@ -23,9 +23,9 @@ enum Tier {
 impl Tier {
     const fn emoji(&self) -> &'static str {
         match self {
-            Self::Default => "🚶",
-            Self::Fast => "🐇",
-            Self::Slow => "🐢",
+            Self::Default => "▶️",
+            Self::Fast => "⏩",
+            Self::Slow => "🐌",
         }
     }
 }
