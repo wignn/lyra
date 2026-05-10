@@ -106,7 +106,7 @@ plugins:
       albumLoadLimit: 2
       resolveArtistsInSearch: true
       localFiles: true
-      preferAnonymousToken: true
+      preferAnonymousToken: false
     applemusic:
       countryCode: "US"
     youtube:
