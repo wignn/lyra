@@ -1,5 +1,6 @@
 mod back;
 pub mod jump;
+mod lyrics;
 mod play_pause;
 mod restart;
 mod seek;
@@ -7,6 +8,7 @@ mod skip;
 
 pub use back::{Back, back};
 pub use jump::{Autocomplete as JumpAutocomplete, Jump};
+pub use lyrics::Lyrics;
 pub use play_pause::{PlayPause, play_pause};
 pub use restart::Restart;
 pub use seek::Seek;

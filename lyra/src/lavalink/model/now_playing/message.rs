@@ -88,9 +88,9 @@ impl<'a> From<&'a Data> for AlbumInfo<'a> {
 impl std::fmt::Display for AlbumInfo<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let Some(n) = self.0.as_ref() {
-            f.write_str("💿 **")?;
+            f.write_str("**Album:** ")?;
             f.write_str(n)?;
-            f.write_str("**\n")?;
+            f.write_str("\n")?;
         }
         Ok(())
     }
@@ -107,11 +107,11 @@ impl<'a> From<&'a Data> for PlaylistInfo<'a> {
 impl std::fmt::Display for PlaylistInfo<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let Some(p) = self.0.as_ref() {
-            f.write_str("📋 **[")?;
+            f.write_str("**Playlist:** [")?;
             f.write_str(p.name())?;
             f.write_str("](")?;
             f.write_str(p.uri())?;
-            f.write_str(")**\n")?;
+            f.write_str(")\n")?;
         }
         Ok(())
     }
@@ -124,11 +124,11 @@ impl std::fmt::Display for Description<'_> {
         let data = self.0;
         AlbumInfo::from(data).fmt(f)?;
         PlaylistInfo::from(data).fmt(f)?;
-        f.write_str("🔢 **")?;
+        f.write_str("**Track:** ")?;
         data.queue().position().fmt(f)?;
-        f.write_str("** / ")?;
+        f.write_str(" / ")?;
         data.queue().len().fmt(f)?;
-        f.write_str(" ⏱️ ")?;
+        f.write_str(" **Time:** ")?;
         DurationLeft::from(data).fmt(f)?;
         f.write_str(" / ")?;
         data.duration.pretty_display().fmt(f)?;
@@ -225,15 +225,15 @@ impl Message {
     const fn button(
         custom_id: String,
         disabled: bool,
-        emoji: EmojiReactionType,
+        label: String,
         style: ButtonStyle,
     ) -> Component {
         Component::Button(Button {
             disabled,
             style,
             custom_id: Some(custom_id),
-            emoji: Some(emoji),
-            label: None,
+            emoji: None,
+            label: Some(label),
             url: None,
             sku_id: None,
         })
@@ -243,7 +243,7 @@ impl Message {
         if self.data.paused {
             return "Now Playing";
         }
-        "🎶 **Now Playing**"
+        "**Now Playing**"
     }
 
     async fn build_components(&self) -> Result<Component, DeserialiseBodyFromHttpError> {
@@ -260,57 +260,54 @@ impl Message {
 
     #[inline]
     async fn previous(&self) -> Result<Component, DeserialiseBodyFromHttpError> {
-        let emoji = emoji::previous(self).await?.clone();
         let custom_id = NOW_PLAYING_BUTTON_IDS.previous.to_owned();
-        let previous_button = Self::button(custom_id, false, emoji, ButtonStyle::Secondary);
+        let previous_button = Self::button(custom_id, false, "Previous".to_string(), ButtonStyle::Secondary);
         Ok(previous_button)
     }
 
     #[inline]
     async fn next(&self) -> Result<Component, DeserialiseBodyFromHttpError> {
-        let emoji = emoji::next(self).await?.clone();
         let custom_id = NOW_PLAYING_BUTTON_IDS.next.to_owned();
-        let next_button = Self::button(custom_id, false, emoji, ButtonStyle::Secondary);
+        let next_button = Self::button(custom_id, false, "Next".to_string(), ButtonStyle::Secondary);
         Ok(next_button)
     }
 
     #[inline]
     async fn repeat(&self) -> Result<Component, DeserialiseBodyFromHttpError> {
-        let emoji = match self.data.queue().repeat_mode() {
-            RepeatMode::Off => emoji::repeat_off(self).await,
-            RepeatMode::All => emoji::repeat_all(self).await,
-            RepeatMode::Track => emoji::repeat_track(self).await,
-        }?
-        .clone();
+        let label = match self.data.queue().repeat_mode() {
+            RepeatMode::Off => "Repeat: Off",
+            RepeatMode::All => "Repeat: All",
+            RepeatMode::Track => "Repeat: Track",
+        }.to_string();
         let custom_id = NOW_PLAYING_BUTTON_IDS.repeat.to_owned();
-        let repeat_button = Self::button(custom_id, false, emoji, ButtonStyle::Success);
+        let repeat_button = Self::button(custom_id, false, label, ButtonStyle::Success);
         Ok(repeat_button)
     }
 
     #[inline]
     async fn play_pause(&self) -> Result<Component, DeserialiseBodyFromHttpError> {
-        let emoji = if self.data.paused {
-            emoji::play(self).await?.clone()
+        let label = if self.data.paused {
+            "Play".to_string()
         } else {
-            emoji::pause(self).await?.clone()
+            "Pause".to_string()
         };
         let custom_id = NOW_PLAYING_BUTTON_IDS.play_pause.to_owned();
-        let play_pause_button = Self::button(custom_id, false, emoji, ButtonStyle::Primary);
+        let play_pause_button = Self::button(custom_id, false, label, ButtonStyle::Primary);
         Ok(play_pause_button)
     }
 
     #[inline]
     async fn shuffle(&self) -> Result<Component, DeserialiseBodyFromHttpError> {
-        let (emoji, disabled) = {
-            let (shuffle_emoji, shuffle_disabled) = match self.data.queue().indexer() {
-                IndexerType::Standard => (emoji::shuffle_off(self).await, false),
-                IndexerType::Fair => (emoji::shuffle_off(self).await, true),
-                IndexerType::Shuffled => (emoji::shuffle_on(self).await, false),
+        let (label, disabled) = {
+            let (shuffle_label, shuffle_disabled) = match self.data.queue().indexer() {
+                IndexerType::Standard => ("Shuffle", false),
+                IndexerType::Fair => ("Shuffle", true),
+                IndexerType::Shuffled => ("Shuffled", false),
             };
-            (shuffle_emoji?.clone(), shuffle_disabled)
+            (shuffle_label.to_string(), shuffle_disabled)
         };
         let custom_id = NOW_PLAYING_BUTTON_IDS.shuffle.to_owned();
-        let shuffle_button = Self::button(custom_id, disabled, emoji, ButtonStyle::Danger);
+        let shuffle_button = Self::button(custom_id, disabled, label, ButtonStyle::Danger);
         Ok(shuffle_button)
     }
 

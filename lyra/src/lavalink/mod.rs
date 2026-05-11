@@ -12,6 +12,9 @@ pub use self::{
         PlayerDataWrite, PlaylistAwareTrackData, PlaylistMetadata, Queue, QueueItem, RepeatMode,
         UnwrappedData, UnwrappedPlayerInfoUri, make_playlist_aware, wait_for_with,
     },
-    plugin::lava_src::{PluginInfo, PluginPlaylistInfo},
+    plugin::{
+        lava_lyrics,
+        lava_src::{PluginInfo, PluginPlaylistInfo},
+    },
     process::handlers,
 };

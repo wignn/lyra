@@ -10,7 +10,7 @@ use crate::component::{
     connection::{Join, Leave},
     controller::NowPlaying,
     misc::{Ping, Uptime},
-    playback::{Back, Jump, JumpAutocomplete, PlayPause, Restart, Seek, Skip},
+    playback::{Back, Jump, JumpAutocomplete, Lyrics, PlayPause, Restart, Seek, Skip},
     queue::{
         AddToQueue, Autoplay, Clear, FairQueue, Move, MoveAutocomplete, Play, PlayAutocomplete,
         PlayFile, Remove, RemoveAutocomplete, RemoveRange, RemoveRangeAutocomplete, Repeat,
@@ -341,6 +341,7 @@ declare_slash_commands![
     Jump,
     Skip,
     Back,
+    Lyrics,
     NowPlaying,
 ];
 declare_slash_commands_callback![Ping, Uptime];
@@ -370,6 +371,7 @@ declare_guild_slash_commands_callback![
     Jump,
     Skip,
     Back,
+    Lyrics,
     NowPlaying,
 ];
 
